@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Primary: Deep Blue tone */
+  --primary: 249 100% 41%; /* #2700D3 */
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary and accent hues matching blue family */
+  --secondary: 247 54% 25%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 230 40% 96%;
+  --muted-foreground: 225 16% 47%;
+
+  --accent: 248 100% 65%; /* lighter blue accent */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 225 32% 91%;
+  --input: 225 32% 91%;
+  --ring: 249 100% 41%;
+
+  --radius: 0.75rem;
+
+  /* Updated gradient to match blue theme */
+  --hero-gradient: linear-gradient(135deg, hsl(249 100% 41%) 0%, hsl(248 100% 65%) 100%);
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --card-hover-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ .dark {
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  --card: 247 33% 17%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 247 33% 17%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 249 100% 55%; /* lighter for dark bg */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 247 54% 30%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 247 33% 24%;
+  --muted-foreground: 215 20% 65%;
+
+  --accent: 248 100% 70%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 247 33% 24%;
+  --input: 247 33% 24%;
+  --ring: 249 100% 55%;
+}
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
