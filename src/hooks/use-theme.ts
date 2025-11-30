@@ -4,33 +4,53 @@ import { useEffect, useState } from "react";
 export type Theme = "light" | "dark" | "system";
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>("system");
-
-  // Set initial theme based on system or localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("theme") as Theme;
-    if (saved) {
-      setTheme(saved);
-      applyTheme(saved);
-    } else {
-      setTheme("system");
-      applyTheme("system");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("theme") as Theme) || "system";
     }
-  }, []);
+    return "system";
+  });
 
-  const applyTheme = (theme: Theme) => {
+  useEffect(() => {
     const root = window.document.documentElement;
-    const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-    if (isDark) root.classList.add("dark");
-    else root.classList.remove("dark");
-  };
+    root.classList.remove("light", "dark");
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
+
+      root.classList.add(systemTheme);
+      return;
+    }
+
+    root.classList.add(theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleChange = () => {
+      if (theme === "system") {
+        const root = window.document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(mediaQuery.matches ? "dark" : "light");
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
+    const root = window.document.documentElement;
+    const isDark = root.classList.contains("dark");
+    const newTheme = isDark ? "light" : "dark";
+
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
-    applyTheme(newTheme);
   };
 
   return { theme, toggleTheme };

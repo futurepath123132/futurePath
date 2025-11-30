@@ -46,6 +46,14 @@ export type Database = {
           full_name: string | null
           id: string
           updated_at: string
+          date_of_birth: string | null
+          gender: string | null
+          nationality: string | null
+          phone: string | null
+          state: string | null
+          zip_code: string | null
+          address: string | null
+          preferred_discipline: string | null
         }
         Insert: {
           city?: string | null
@@ -54,6 +62,14 @@ export type Database = {
           full_name?: string | null
           id: string
           updated_at?: string
+          date_of_birth?: string | null
+          gender?: string | null
+          nationality?: string | null
+          phone?: string | null
+          state?: string | null
+          zip_code?: string | null
+          address?: string | null
+          preferred_discipline?: string | null
         }
         Update: {
           city?: string | null
@@ -62,6 +78,14 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string
+          date_of_birth?: string | null
+          gender?: string | null
+          nationality?: string | null
+          phone?: string | null
+          state?: string | null
+          zip_code?: string | null
+          address?: string | null
+          preferred_discipline?: string | null
         }
         Relationships: []
       }
@@ -134,6 +158,10 @@ export type Database = {
           tuition_range: string | null
           updated_at: string
           website: string | null
+          study_mode: string | null
+          application_deadline: string | null
+          icon_url: string | null
+          images: string[] | null
         }
         Insert: {
           address?: string | null
@@ -152,6 +180,10 @@ export type Database = {
           tuition_range?: string | null
           updated_at?: string
           website?: string | null
+          study_mode?: string | null
+          application_deadline?: string | null
+          icon_url?: string | null
+          images?: string[] | null
         }
         Update: {
           address?: string | null
@@ -170,6 +202,10 @@ export type Database = {
           tuition_range?: string | null
           updated_at?: string
           website?: string | null
+          study_mode?: string | null
+          application_deadline?: string | null
+          icon_url?: string | null
+          images?: string[] | null
         }
         Relationships: []
       }

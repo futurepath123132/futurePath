@@ -45,7 +45,6 @@ export default function Navbar() {
                 <Button onClick={signOut} variant="outline" size="sm">
                   Sign Out
                 </Button>
-                <ThemeToggle />
               </>
             ) : (
               <Link to="/auth">
@@ -54,6 +53,7 @@ export default function Navbar() {
                 </Button>
               </Link>
             )}
+            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}
