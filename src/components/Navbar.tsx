@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { GraduationCap, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import ThemeToggle from "./ThemeToggle";
+import ProfileDropdown from './ProfileDropdown';
 
 export default function Navbar() {
   const { user, signOut, isAdmin, loading } = useAuth();
@@ -42,18 +43,19 @@ export default function Navbar() {
                   </Link>
                 )}
 
-                <Button onClick={signOut} variant="outline" size="sm">
-                  Sign Out
-                </Button>
+                <ThemeToggle />
+                <ProfileDropdown />
               </>
             ) : (
-              <Link to="/auth">
-                <Button variant="default" size="sm">
-                  Sign In
-                </Button>
-              </Link>
+              <>
+                <ThemeToggle />
+                <Link to="/auth">
+                  <Button variant="default" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+              </>
             )}
-            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,9 +112,9 @@ export default function Navbar() {
                   </Link>
                 )}
 
-                <Button onClick={signOut} variant="outline" size="sm" className="w-full">
-                  Sign Out
-                </Button>
+                <div className="pt-2">
+                  <ProfileDropdown />
+                </div>
               </>
             ) : (
               <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>

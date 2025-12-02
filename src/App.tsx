@@ -21,6 +21,7 @@ import BottomBar from "./components/BottomBar"; // import it at the top
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import ConfirmEmail from "./pages/ConfirmEmail";
+import ChangePassword from "./pages/ChangePassword";
 import ScholarshipDetail from "./pages/ScholarshipDetail";
 import Feedback from "./pages/Feedback";
 
@@ -57,6 +58,7 @@ const App = () => {
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/auth/reset-password" element={<ResetPassword />} />
                 <Route path="/confirm-email" element={<ConfirmEmail />} />
+                <Route path="/change-password" element={<ChangePassword />} />
 
               </Routes>
               <BottomBar />
