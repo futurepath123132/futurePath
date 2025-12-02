@@ -11,6 +11,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
   isAdmin: boolean;
 }
 
@@ -28,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           setTimeout(() => {
             checkAdminStatus(session.user.id);
@@ -58,13 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('user_id', userId)
       .eq('role', 'admin')
       .maybeSingle();
-    
+
     setIsAdmin(!!data);
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -75,11 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     });
-    
+
     if (!error) {
-      navigate('/');
+      navigate('/confirm-email');
     }
-    
+
     return { error };
   };
 
@@ -88,11 +89,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
-    
+
     if (!error) {
       navigate('/');
     }
-    
+
     return { error };
   };
 
@@ -102,8 +103,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate('/auth');
   };
 
+  const resetPassword = async (email: string) => {
+    const redirectTo = `${window.location.origin}/auth/reset-password`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
+    return { error };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut, isAdmin }}>
+    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut, resetPassword, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

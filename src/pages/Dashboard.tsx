@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Link, Navigate } from 'react-router-dom';
-import { Heart, GraduationCap, Award, MapPin, CalendarDays, ExternalLink, X } from 'lucide-react';
+import { Heart, GraduationCap, Award, MapPin, CalendarDays, ExternalLink, X, Pencil } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   Select,
@@ -71,30 +71,17 @@ export default function Dashboard() {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [suggestedUniversities, setSuggestedUniversities] = useState<University[]>([]);
   const [saving, setSaving] = useState(false);
-  
+  const [editMode, setEditMode] = useState<Record<string, boolean>>({});
+
+  const toggleEdit = (field: string) => {
+    setEditMode(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
+
   const emailVerified = user?.email_confirmed_at !== null;
   const emailPending = (user as any)?.new_email;
-  
-  useEffect(() => {
-    if (user) {
-      fetchProfile();
-      fetchFavorites();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (profile.city || profile.preferred_discipline) {
-      fetchSuggestedUniversities();
-    }
-  }, [profile.city, profile.preferred_discipline]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
 
   const fetchProfile = async () => {
     try {
@@ -104,11 +91,18 @@ export default function Dashboard() {
         .eq('id', user?.id)
         .single();
 
-      if (error) throw error;
+
+
+      // Ignore error if it's just that the row doesn't exist (PGRST116)
+      if (error && error.code !== 'PGRST116') throw error;
+
+      // Use user metadata as fallback
+      const userMetaData = user?.user_metadata || {};
+
       if (data) {
         setProfile({
-          full_name: data.full_name || '',
-          email: data.email || '',
+          full_name: data.full_name || userMetaData.full_name || userMetaData.name || '',
+          email: data.email || user?.email || '',
           city: data.city || '',
           date_of_birth: data.date_of_birth || '',
           gender: data.gender || '',
@@ -118,6 +112,21 @@ export default function Dashboard() {
           zip_code: data.zip_code || '',
           address: data.address || '',
           preferred_discipline: data.preferred_discipline || '',
+        });
+      } else {
+        // If no profile exists yet, pre-fill from auth data
+        setProfile({
+          full_name: userMetaData.full_name || userMetaData.name || '',
+          email: user?.email || '',
+          city: '',
+          date_of_birth: '',
+          gender: '',
+          nationality: '',
+          phone: '',
+          state: '',
+          zip_code: '',
+          address: '',
+          preferred_discipline: '',
         });
       }
     } catch (error: any) {
@@ -143,7 +152,7 @@ export default function Dashboard() {
             .select('name')
             .eq('id', fav.item_id)
             .single();
-          
+
           if (uni) {
             enrichedFavorites.push({
               ...fav,
@@ -156,7 +165,7 @@ export default function Dashboard() {
             .select('title')
             .eq('id', fav.item_id)
             .single();
-          
+
           if (sch) {
             enrichedFavorites.push({
               ...fav,
@@ -188,13 +197,13 @@ export default function Dashboard() {
       // Note: Filtering by array column 'disciplines' containing 'preferred_discipline'
       // requires specific syntax. If preferred_discipline is set:
       if (profile.preferred_discipline) {
-         query = query.contains('disciplines', [profile.preferred_discipline]);
+        query = query.contains('disciplines', [profile.preferred_discipline]);
       }
 
       const { data, error } = await query;
 
       if (error) throw error;
-      
+
       // Filter out past deadlines
       const now = new Date();
       const year = now.getFullYear();
@@ -220,20 +229,21 @@ export default function Dashboard() {
     try {
       // Update email (Supabase sends verification email automatically)
       if (profile.email !== user?.email) {
-          const { error: emailError } = await supabase.auth.updateUser({
-            email: profile.email,
-          });
-          if (emailError) throw emailError;
-           toast({
-            title: 'Verification Required',
-            description: `A verification link has been sent to ${profile.email}. Please verify to complete the email change.`,
-          });
+        const { error: emailError } = await supabase.auth.updateUser({
+          email: profile.email,
+        });
+        if (emailError) throw emailError;
+        toast({
+          title: 'Verification Required',
+          description: `A verification link has been sent to ${profile.email}. Please verify to complete the email change.`,
+        });
       }
 
       // Update profile table
       const { error } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: user?.id,
           full_name: profile.full_name,
           city: profile.city,
           email: profile.email,
@@ -245,8 +255,8 @@ export default function Dashboard() {
           zip_code: profile.zip_code || null,
           address: profile.address || null,
           preferred_discipline: profile.preferred_discipline || null,
-        })
-        .eq('id', user?.id);
+          updated_at: new Date().toISOString(),
+        });
 
       if (error) throw error;
 
@@ -254,7 +264,7 @@ export default function Dashboard() {
         title: 'Success',
         description: 'Profile updated successfully',
       });
-      
+
       // Refresh suggestions
       fetchSuggestedUniversities();
 
@@ -291,13 +301,34 @@ export default function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+      fetchFavorites();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (profile.city || profile.preferred_discipline) {
+      fetchSuggestedUniversities();
+    }
+  }, [profile.city, profile.preferred_discipline]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <Breadcrumbs />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-foreground mb-8">Dashboard</h1>
-    
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Profile Section - Takes up 2 columns on large screens */}
           <div className="lg:col-span-2 space-y-8">
@@ -310,70 +341,131 @@ export default function Dashboard() {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="full_name">Full Name</Label>
-                      <Input
-                        id="full_name"
-                        value={profile.full_name}
-                        onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                        placeholder="e.g. Shaveer Sajjad"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          id="full_name"
+                          value={profile.full_name}
+                          onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                          placeholder="e.g. Shaveer Sajjad"
+                          disabled={!editMode['full_name']}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleEdit('full_name')}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="dob">Date Of Birth</Label>
-                      <Input
-                        id="dob"
-                        type="date"
-                        value={profile.date_of_birth}
-                        onChange={(e) => setProfile({ ...profile, date_of_birth: e.target.value })}
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          id="dob"
+                          type="date"
+                          value={profile.date_of_birth}
+                          onChange={(e) => setProfile({ ...profile, date_of_birth: e.target.value })}
+                          disabled={!editMode['date_of_birth']}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleEdit('date_of_birth')}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="gender">Gender</Label>
-                      <Select 
-                        value={profile.gender} 
-                        onValueChange={(value) => setProfile({ ...profile, gender: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <Select
+                            value={profile.gender}
+                            onValueChange={(value) => setProfile({ ...profile, gender: value })}
+                            disabled={!editMode['gender']}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Male">Male</SelectItem>
+                              <SelectItem value="Female">Female</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleEdit('gender')}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="nationality">Nationality</Label>
-                      <Select 
-                        value={profile.nationality} 
-                        onValueChange={(value) => setProfile({ ...profile, nationality: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Pakistani">Pakistani</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <Select
+                            value={profile.nationality}
+                            onValueChange={(value) => setProfile({ ...profile, nationality: value })}
+                            disabled={!editMode['nationality']}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Pakistani">Pakistani</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleEdit('nationality')}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                     <div className="space-y-2">
+                    <div className="space-y-2">
                       <Label htmlFor="preferred_discipline">Preferred Discipline</Label>
-                      <Select 
-                        value={profile.preferred_discipline} 
-                        onValueChange={(value) => setProfile({ ...profile, preferred_discipline: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Engineering">Engineering</SelectItem>
-                          <SelectItem value="Business">Business</SelectItem>
-                          <SelectItem value="Arts">Arts</SelectItem>
-                          <SelectItem value="Medical">Medical</SelectItem>
-                          <SelectItem value="Computer Science">Computer Science</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <Select
+                            value={profile.preferred_discipline}
+                            onValueChange={(value) => setProfile({ ...profile, preferred_discipline: value })}
+                            disabled={!editMode['preferred_discipline']}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Engineering">Engineering</SelectItem>
+                              <SelectItem value="Business">Business</SelectItem>
+                              <SelectItem value="Arts">Arts</SelectItem>
+                              <SelectItem value="Medical">Medical</SelectItem>
+                              <SelectItem value="Computer Science">Computer Science</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleEdit('preferred_discipline')}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
@@ -384,14 +476,24 @@ export default function Dashboard() {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={profile.email}
-                          disabled={emailPending ? true : false}
-                          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                        />
-                         {emailPending && (
+                        <div className="flex gap-2">
+                          <Input
+                            id="email"
+                            type="email"
+                            value={profile.email}
+                            disabled={!editMode['email'] || (emailPending ? true : false)}
+                            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleEdit('email')}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {emailPending && (
                           <p className="text-sm text-yellow-500 mt-1">
                             Verification pending: Check <b>{emailPending}</b> to confirm email change.
                           </p>
@@ -399,58 +501,115 @@ export default function Dashboard() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          value={profile.phone}
-                          onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                          placeholder="----------"
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            id="phone"
+                            value={profile.phone}
+                            onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                            placeholder="----------"
+                            disabled={!editMode['phone']}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleEdit('phone')}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="state">State</Label>
-                         <Select 
-                            value={profile.state} 
-                            onValueChange={(value) => setProfile({ ...profile, state: value })}
+                        <div className="flex gap-2">
+                          <div className="flex-1">
+                            <Select
+                              value={profile.state}
+                              onValueChange={(value) => setProfile({ ...profile, state: value })}
+                              disabled={!editMode['state']}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Punjab">Punjab</SelectItem>
+                                <SelectItem value="Sindh">Sindh</SelectItem>
+                                <SelectItem value="KPK">KPK</SelectItem>
+                                <SelectItem value="Balochistan">Balochistan</SelectItem>
+                                <SelectItem value="Gilgit-Baltistan">Gilgit-Baltistan</SelectItem>
+                                <SelectItem value="Azad Kashmir">Azad Kashmir</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleEdit('state')}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Punjab">Punjab</SelectItem>
-                              <SelectItem value="Sindh">Sindh</SelectItem>
-                              <SelectItem value="KPK">KPK</SelectItem>
-                              <SelectItem value="Balochistan">Balochistan</SelectItem>
-                              <SelectItem value="Gilgit-Baltistan">Gilgit-Baltistan</SelectItem>
-                              <SelectItem value="Azad Kashmir">Azad Kashmir</SelectItem>
-                            </SelectContent>
-                          </Select>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="city">City</Label>
-                         <Input
+                        <div className="flex gap-2">
+                          <Input
                             id="city"
                             value={profile.city}
                             onChange={(e) => setProfile({ ...profile, city: e.target.value })}
                             placeholder="e.g., Lahore"
+                            disabled={!editMode['city']}
                           />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleEdit('city')}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="zip_code">Zip Code</Label>
-                        <Input
-                          id="zip_code"
-                          value={profile.zip_code}
-                          onChange={(e) => setProfile({ ...profile, zip_code: e.target.value })}
-                          placeholder="------"
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            id="zip_code"
+                            value={profile.zip_code}
+                            onChange={(e) => setProfile({ ...profile, zip_code: e.target.value })}
+                            placeholder="------"
+                            disabled={!editMode['zip_code']}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleEdit('zip_code')}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="address">Street Address</Label>
-                        <Input
-                          id="address"
-                          value={profile.address}
-                          onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                          placeholder="------"
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            id="address"
+                            value={profile.address}
+                            onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                            placeholder="------"
+                            disabled={!editMode['address']}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleEdit('address')}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -464,7 +623,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-             {/* Suggested Universities Section */}
+            {/* Suggested Universities Section */}
             {suggestedUniversities.length > 0 && (
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold">Suggested Universities</h2>
@@ -472,7 +631,7 @@ export default function Dashboard() {
                   {suggestedUniversities.map((university) => (
                     <Card key={university.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
                       <div className="h-40 relative">
-                         {university.images && university.images.length > 0 ? (
+                        {university.images && university.images.length > 0 ? (
                           <img
                             src={university.images[0]}
                             alt={university.name}
@@ -486,7 +645,7 @@ export default function Dashboard() {
                       </div>
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-2 mb-2">
-                           <h3 className="font-bold line-clamp-1">{university.name}</h3>
+                          <h3 className="font-bold line-clamp-1">{university.name}</h3>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                           <MapPin className="h-3 w-3" />
@@ -495,8 +654,8 @@ export default function Dashboard() {
                         <div className="flex items-center gap-2 text-sm font-medium text-primary mb-4">
                           <CalendarDays className="h-4 w-4" />
                           <span>
-                            {university.application_deadline 
-                              ? new Date(university.application_deadline).toLocaleDateString() 
+                            {university.application_deadline
+                              ? new Date(university.application_deadline).toLocaleDateString()
                               : "Open"}
                           </span>
                         </div>
@@ -556,7 +715,7 @@ export default function Dashboard() {
                             }
                           >
                             <Button size="icon" variant="ghost" className="h-8 w-8">
-                               <ExternalLink className="h-4 w-4" />
+                              <ExternalLink className="h-4 w-4" />
                             </Button>
                           </Link>
                           <Button
