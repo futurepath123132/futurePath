@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import ProfilePictureUpload from '@/components/ProfilePictureUpload';
 
 interface Profile {
   full_name: string;
@@ -31,6 +32,7 @@ interface Profile {
   zip_code: string;
   address: string;
   preferred_discipline: string;
+  profilepic: string | null;
 }
 
 interface Favorite {
@@ -67,6 +69,7 @@ export default function Dashboard() {
     zip_code: '',
     address: '',
     preferred_discipline: '',
+    profilepic: null,
   });
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [suggestedUniversities, setSuggestedUniversities] = useState<University[]>([]);
@@ -112,6 +115,7 @@ export default function Dashboard() {
           zip_code: data.zip_code || '',
           address: data.address || '',
           preferred_discipline: data.preferred_discipline || '',
+          profilepic: data.profilepic || null,
         });
       } else {
         // If no profile exists yet, pre-fill from auth data
@@ -127,6 +131,7 @@ export default function Dashboard() {
           zip_code: '',
           address: '',
           preferred_discipline: '',
+          profilepic: null,
         });
       }
     } catch (error: any) {
@@ -337,6 +342,16 @@ export default function Dashboard() {
                 <CardTitle>Personal Information</CardTitle>
               </CardHeader>
               <CardContent>
+                {/* Profile Picture Upload */}
+                <div className="mb-6 pb-6 border-b">
+                  <ProfilePictureUpload
+                    userId={user.id}
+                    currentImageUrl={profile.profilepic}
+                    userName={profile.full_name}
+                    onImageUpdate={(newUrl) => setProfile({ ...profile, profilepic: newUrl })}
+                  />
+                </div>
+
                 <form id="profile-form" onSubmit={handleUpdateProfile} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
