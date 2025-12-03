@@ -33,6 +33,10 @@ interface University {
   icon_url?: string;
   study_mode?: 'On-site' | 'Online' | 'Hybrid';
   size?: string;
+  credit_hours?: number;
+  starting_date?: string;
+  available_seats?: number;
+  admission_requirements?: string;
 }
 
 interface Filters {
@@ -68,6 +72,10 @@ export default function AdminUniversities() {
     application_deadline: '',
     study_mode: 'On-site',
     size: '',
+    credit_hours: '',
+    starting_date: '',
+    available_seats: '',
+    admission_requirements: '',
   });
 
   useEffect(() => {
@@ -152,6 +160,10 @@ export default function AdminUniversities() {
       created_by: user?.id,
       images: imageUrls.length ? imageUrls : undefined,
       icon_url: iconUrl,
+      credit_hours: formData.credit_hours ? parseInt(formData.credit_hours) : null,
+      starting_date: formData.starting_date || null,
+      available_seats: formData.available_seats ? parseInt(formData.available_seats) : null,
+      admission_requirements: formData.admission_requirements || null,
     };
 
     if (editingId) {
@@ -175,6 +187,10 @@ export default function AdminUniversities() {
       study_mode: university.study_mode || 'On-site',
       application_deadline: university.application_deadline || '',
       size: university.size || '',
+      credit_hours: university.credit_hours?.toString() || '',
+      starting_date: university.starting_date || '',
+      available_seats: university.available_seats?.toString() || '',
+      admission_requirements: university.admission_requirements || '',
     });
     setDialogOpen(true);
   };
@@ -192,7 +208,7 @@ export default function AdminUniversities() {
       name: '', city: '', address: '', website: '', tuition_range: '', ranking: '',
       description: '', apply_link: '', contact_email: '', contact_phone: '',
       disciplines: '', programs: '', application_deadline: '', study_mode: 'On-site',
-      size: '',
+      size: '', credit_hours: '', starting_date: '', available_seats: '', admission_requirements: '',
     });
     setImages(null);
     setIcon(null);
@@ -230,7 +246,14 @@ export default function AdminUniversities() {
                   <div><Label htmlFor="ranking">Ranking</Label><Input id="ranking" type="number" value={formData.ranking} onChange={e => setFormData({ ...formData, ranking: e.target.value })} /></div>
                 </div>
                 <div><Label htmlFor="size">Size (sq ft)</Label><Input id="size" placeholder="e.g., 500,000" value={formData.size} onChange={e => setFormData({ ...formData, size: e.target.value })} /></div>
-                <div><Label htmlFor="application_deadline">Application Deadline</Label><Input id="application_deadline" type="date" value={formData.application_deadline} onChange={e => setFormData({ ...formData, application_deadline: e.target.value })} /></div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div><Label htmlFor="credit_hours">Credit Hours</Label><Input id="credit_hours" type="number" value={formData.credit_hours} onChange={e => setFormData({ ...formData, credit_hours: e.target.value })} /></div>
+                  <div><Label htmlFor="available_seats">Available Seats</Label><Input id="available_seats" type="number" value={formData.available_seats} onChange={e => setFormData({ ...formData, available_seats: e.target.value })} /></div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div><Label htmlFor="application_deadline">Application Deadline</Label><Input id="application_deadline" type="date" value={formData.application_deadline} onChange={e => setFormData({ ...formData, application_deadline: e.target.value })} /></div>
+                  <div><Label htmlFor="starting_date">Starting Date</Label><Input id="starting_date" type="date" value={formData.starting_date} onChange={e => setFormData({ ...formData, starting_date: e.target.value })} /></div>
+                </div>
                 <div><Label htmlFor="study_mode">Study Mode</Label>
                   <select id="study_mode" value={formData.study_mode} onChange={e => setFormData({ ...formData, study_mode: e.target.value as 'On-site' | 'Online' | 'Hybrid' })} className="w-full border rounded px-2 py-1">
                     <option value="On-site">On-site</option>
@@ -239,6 +262,7 @@ export default function AdminUniversities() {
                   </select>
                 </div>
                 <div><Label htmlFor="description">Description</Label><Textarea id="description" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={3} /></div>
+                <div><Label htmlFor="admission_requirements">Admission Requirements</Label><Textarea id="admission_requirements" value={formData.admission_requirements} onChange={e => setFormData({ ...formData, admission_requirements: e.target.value })} rows={3} /></div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div><Label htmlFor="contact_email">Contact Email</Label><Input id="contact_email" type="email" value={formData.contact_email} onChange={e => setFormData({ ...formData, contact_email: e.target.value })} /></div>
                   <div><Label htmlFor="contact_phone">Contact Phone</Label><Input id="contact_phone" value={formData.contact_phone} onChange={e => setFormData({ ...formData, contact_phone: e.target.value })} /></div>
