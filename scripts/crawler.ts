@@ -248,7 +248,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     (async () => {
         // Load environment variables
         const envPath = path.resolve(__dirname, '../.env');
-        console.log('Loading .env from:', envPath);
+      
         const result = dotenv.config({ path: envPath });
 
         if (result.error) {
@@ -258,8 +258,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         const supabaseUrl = process.env.VITE_SUPABASE_URL;
         const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-        console.log('Supabase URL found:', !!supabaseUrl);
-        console.log('Supabase Key found:', !!supabaseKey);
+       
 
         if (!supabaseUrl || !supabaseKey) {
             console.error('Missing Supabase credentials in .env');
@@ -276,13 +275,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         const data = await scrapeUrl(url);
 
         if (data) {
-            console.log('------------------------------------------------');
-            console.log('SCRAPED DATA RESULT:');
-            console.log(JSON.stringify(data, null, 2));
-            console.log('------------------------------------------------');
-
-            // Save to Supabase
-            console.log('Saving to Supabase...');
+           
 
             const universityData = {
                 name: data.title,

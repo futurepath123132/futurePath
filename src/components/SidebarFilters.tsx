@@ -6,16 +6,19 @@ interface SidebarFiltersProps {
     city?: string[];
     tuition_range?: string[];
     discipline?: string[];
+    size?: string[]; // Added size
   };
   selectedFilters: {
     city?: string;
     tuition_range?: string;
     discipline?: string;
+    size?: string; // Added size
   };
   onFilterChange: (selected: {
     city?: string;
     tuition_range?: string;
     discipline?: string;
+    size?: string;
   }) => void;
 }
 
@@ -41,7 +44,7 @@ export default function SidebarFilters({
         {filters.city && (
           <div>
             <p className="font-medium text-sm mb-1">City</p>
-           <select
+            <select
               className="w-full border rounded-md p-2 bg-background text-foreground  dark:text-white"
               value={selectedFilters.city || ""}
               onChange={(e) => handleChange("city", e.target.value)}
@@ -86,6 +89,24 @@ export default function SidebarFilters({
               {filters.discipline.map((d) => (
                 <option key={d} value={d}>
                   {d}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {filters.size && (
+          <div>
+            <p className="font-medium text-sm mb-1">Square Feet</p>
+            <select
+              className="w-full border rounded-md p-2 bg-background text-foreground  dark:text-white"
+              value={selectedFilters.size || ""}
+              onChange={(e) => handleChange("size", e.target.value)}
+            >
+              <option value="">All</option>
+              {filters.size.map((s) => (
+                <option key={s} value={s}>
+                  {s}
                 </option>
               ))}
             </select>

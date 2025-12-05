@@ -89,8 +89,9 @@ export default function AdminUniversities() {
     const { data, error } = await supabase.from('universities').select('*').order('name');
     if (error) toast({ variant: 'destructive', title: 'Error', description: error.message });
     else {
-      setUniversities(data || []);
-      setFilteredUniversities(data || []);
+      const typedData = (data as unknown as University[]) || [];
+      setUniversities(typedData);
+      setFilteredUniversities(typedData);
     }
   };
 

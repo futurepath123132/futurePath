@@ -97,7 +97,7 @@ export default function ProfileDropdown() {
             <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
+                        <div>
                             {profile.profilepic ? (
                                 <img
                                     src={profile.profilepic}

@@ -25,13 +25,15 @@ interface University {
   disciplines?: string[];
   website?: string;
   images?: string[];
-  icon_url?: string; // ← add this
+  icon_url?: string;
+  size?: string; // Added size field
 }
 
 interface Filters {
   city?: string;
   tuition_range?: string;
   discipline?: string;
+  size?: string;
 }
 
 export default function Universities() {
@@ -51,9 +53,10 @@ export default function Universities() {
       const { data, error } = (await supabase
         .from("universities")
         .select(
-          "id, name, city, tuition_range, study_mode, application_deadline, disciplines, website, images, icon_url"
+          "id, name, city, tuition_range, study_mode, application_deadline, disciplines, website, images, icon_url, size"
         )
         .order("name")) as { data: University[] | null; error: any };
+
 
       if (error) throw error;
 
@@ -99,6 +102,9 @@ export default function Universities() {
         u.disciplines?.includes(selected.discipline!)
       );
 
+    if (selected.size)
+      filtered = filtered.filter((u) => u.size === selected.size);
+
     setUniversities(filtered);
   };
 
@@ -123,6 +129,7 @@ export default function Universities() {
               city: ["Lahore", "Faisalabad", "Multan"],
               tuition_range: ["100,000 - 200,000", "300,000 - 400,000", "500,000+"],
               discipline: ["Engineering", "Business", "Arts", "Medical"],
+              size: Array.from(new Set(allUniversities.map((u) => u.size).filter(Boolean))) as string[],
             }}
             selectedFilters={filters}
             onFilterChange={handleFilterChange}
