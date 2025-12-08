@@ -24,6 +24,8 @@ import ConfirmEmail from "./pages/ConfirmEmail";
 import ChangePassword from "./pages/ChangePassword";
 import ScholarshipDetail from "./pages/ScholarshipDetail";
 import Feedback from "./pages/Feedback";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminUsers from "./pages/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,8 @@ const App = () => {
                 <Route path="/admin/universities" element={<AdminUniversities />} />
                 <Route path="/admin/scholarships" element={<AdminScholarships />} />
                 <Route path="/admin/scraper" element={<AdminScraper />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/analytics" element={<AdminAnalytics />} />
                 <Route path="/feedback" element={<Feedback />} />
 
                 <Route path="*" element={<NotFound />} />

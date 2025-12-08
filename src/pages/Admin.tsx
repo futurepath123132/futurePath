@@ -61,25 +61,29 @@ export default function Admin() {
             </Card>
           </Link>
 
-          <Card className="opacity-60">
-            <CardHeader>
-              <Users className="h-12 w-12 text-muted-foreground mb-4" />
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>
-                View and manage user accounts (Coming soon)
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <Link to="/admin/users">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <Users className="h-12 w-12 text-primary mb-4" />
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>
+                  View and manage user accounts
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
 
-          <Card className="opacity-60">
-            <CardHeader>
-              <BarChart className="h-12 w-12 text-muted-foreground mb-4" />
-              <CardTitle>Analytics</CardTitle>
-              <CardDescription>
-                View platform statistics and insights (Coming soon)
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <Link to="/admin/analytics">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <BarChart className="h-12 w-12 text-primary mb-4" />
+                <CardTitle>Analytics</CardTitle>
+                <CardDescription>
+                  View platform statistics and insights
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>
