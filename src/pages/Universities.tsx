@@ -44,6 +44,8 @@ export default function Universities() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  const [visibleCount, setVisibleCount] = useState(4);
+
   useEffect(() => {
     fetchUniversities();
   }, []);
@@ -87,6 +89,7 @@ export default function Universities() {
 
   const handleFilterChange = (selected: Filters) => {
     setFilters(selected);
+    setVisibleCount(4);
     let filtered = allUniversities;
 
     if (selected.city)
@@ -117,6 +120,14 @@ export default function Universities() {
       )
   );
 
+  // Reset pagination when search changes
+  useEffect(() => {
+    setVisibleCount(4);
+  }, [searchTerm]);
+
+  const displayedUniversities = filteredUniversities.slice(0, visibleCount);
+  const cities = Array.from(new Set(allUniversities.map((u) => u.city))).sort();
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -126,7 +137,7 @@ export default function Universities() {
         <div className="w-full md:w-64 space-y-4">
           <SidebarFilters
             filters={{
-              city: ["Lahore", "Faisalabad", "Multan"],
+              city: cities,
               tuition_range: ["100,000 - 200,000", "300,000 - 400,000", "500,000+"],
               discipline: ["Engineering", "Business", "Arts", "Medical"],
               size: Array.from(new Set(allUniversities.map((u) => u.size).filter(Boolean))) as string[],
@@ -175,7 +186,7 @@ export default function Universities() {
             </div>
           ) : (
             <div className="flex flex-col gap-6">
-              {filteredUniversities.map((university) => (
+              {displayedUniversities.map((university) => (
                 <Card
                   key={university.id}
                   className="group hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row overflow-hidden border-border/50 bg-card"
@@ -255,6 +266,18 @@ export default function Universities() {
                   </div>
                 </Card>
               ))}
+
+              {filteredUniversities.length > visibleCount && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    onClick={() => setVisibleCount((prev) => prev + 4)}
+                    variant="outline"
+                    className="min-w-[200px]"
+                  >
+                    Load More
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

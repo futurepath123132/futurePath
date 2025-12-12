@@ -67,7 +67,7 @@ export function UniversitySidebar({ university }: UniversitySidebarProps) {
                         <h3 className="text-xl font-semibold mb-4 text-foreground">Programs</h3>
                         <div className="flex flex-wrap gap-2">
                             {university.programs.map((program, idx) => (
-                                <span key={idx} className="bg-secondary/10 text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium">
+                                <span key={idx} className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-medium">
                                     {program}
                                 </span>
                             ))}
