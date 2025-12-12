@@ -22,6 +22,7 @@ import {
     Legend
 } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
+import { Loader } from '@/components/ui/loader';
 
 export default function AdminAnalytics() {
     const { user, loading, isAdmin } = useAuth();
@@ -116,7 +117,7 @@ export default function AdminAnalytics() {
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loader center />;
     if (!user || !isAdmin) return <Navigate to="/" replace />;
 
     return (
@@ -179,7 +180,7 @@ export default function AdminAnalytics() {
                         </CardHeader>
                         <CardContent className="h-[300px]">
                             {isLoading ? (
-                                <div className="h-full flex items-center justify-center">Loading...</div>
+                                <Loader center />
                             ) : (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={userGrowthData}>
@@ -218,7 +219,7 @@ export default function AdminAnalytics() {
                         </CardHeader>
                         <CardContent className="h-[300px]">
                             {isLoading ? (
-                                <div className="h-full flex items-center justify-center">Loading...</div>
+                                <Loader center />
                             ) : (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <RePieChart>

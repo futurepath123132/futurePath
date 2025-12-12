@@ -10,6 +10,7 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { ScholarshipDialog, Scholarship } from '@/components/admin/ScholarshipDialog';
+import { Loader } from '@/components/ui/loader';
 
 export default function AdminScholarships() {
   const { user, loading, isAdmin } = useAuth();
@@ -24,7 +25,7 @@ export default function AdminScholarships() {
     }
   }, [user, isAdmin]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader center />;
   if (!user || !isAdmin) return <Navigate to="/" replace />;
 
   const fetchScholarships = async () => {

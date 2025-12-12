@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { Loader } from '@/components/ui/loader';
 
 interface Scholarship {
   id: string;
@@ -122,10 +123,8 @@ export default function ScholarshipDetail() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-         <Breadcrumbs />
-        <div className="container mx-auto px-4 py-8">
-          <p className="text-center text-muted-foreground">Loading...</p>
-        </div>
+        <Breadcrumbs />
+        <Loader center />
       </div>
     );
   }
@@ -134,7 +133,7 @@ export default function ScholarshipDetail() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-         <Breadcrumbs />
+        <Breadcrumbs />
         <div className="container mx-auto px-4 py-8">
           <p className="text-center text-muted-foreground">Scholarship not found</p>
         </div>
@@ -145,7 +144,7 @@ export default function ScholarshipDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-       <Breadcrumbs />
+      <Breadcrumbs />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-4">
           <Link to="/scholarships" className="text-primary hover:underline">

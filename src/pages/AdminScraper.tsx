@@ -11,6 +11,7 @@ import ScraperSourceConfig from '@/components/admin-scraper/ScraperSourceConfig'
 import ScraperReview from '@/components/admin-scraper/ScraperReview';
 import BulkScraperResults, { BulkResult } from '@/components/admin-scraper/BulkScraperResults';
 import { processHtml } from '@/components/admin-scraper/utils';
+import { Loader } from '@/components/ui/loader';
 
 export default function AdminScraper() {
     const { user, loading, isAdmin } = useAuth();
@@ -32,7 +33,7 @@ export default function AdminScraper() {
     const [bulkProgress, setBulkProgress] = useState<{ current: number; total: number; currentUrl: string } | null>(null);
     const [isBulkScraping, setIsBulkScraping] = useState(false);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loader center />;
     if (!user || !isAdmin) return <Navigate to="/" replace />;
 
     const handleScrape = async () => {

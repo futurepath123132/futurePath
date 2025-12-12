@@ -4,12 +4,13 @@ import Navbar from '@/components/Navbar';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GraduationCap, Award, Users, BarChart, Globe } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { Loader } from '@/components/ui/loader';
 
 export default function Admin() {
   const { user, loading, isAdmin } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader center />;
   }
 
   if (!user || !isAdmin) {

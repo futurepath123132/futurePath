@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Search, User as UserIcon, Shield } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { Loader } from '@/components/ui/loader';
 
 interface UserProfile {
     id: string;
@@ -92,7 +93,7 @@ export default function AdminUsers() {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loader center />;
     if (!user || !isAdmin) return <Navigate to="/" replace />;
 
     return (
@@ -125,7 +126,7 @@ export default function AdminUsers() {
                     </CardHeader>
                     <CardContent>
                         {isLoadingData ? (
-                            <div className="text-center py-8">Loading users...</div>
+                            <Loader center size={32} />
                         ) : (
                             <div className="rounded-md border">
                                 <Table>

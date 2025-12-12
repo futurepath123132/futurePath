@@ -11,6 +11,7 @@ import { UniversityStats } from '@/components/university-detail/UniversityStats'
 import { UniversityInfo } from '@/components/university-detail/UniversityInfo';
 import { UniversityGallery } from '@/components/university-detail/UniversityGallery';
 import { UniversitySidebar } from '@/components/university-detail/UniversitySidebar';
+import { Loader } from '@/components/ui/loader';
 
 export default function UniversityDetail() {
   const { id } = useParams<{ id: string }>();
@@ -115,9 +116,7 @@ export default function UniversityDetail() {
       <div className="min-h-screen bg-background">
         <Navbar />
         <Breadcrumbs />
-        <div className="container mx-auto px-4 py-8">
-          <p className="text-center text-muted-foreground">Loading...</p>
-        </div>
+        <Loader center />
       </div>
     );
   }

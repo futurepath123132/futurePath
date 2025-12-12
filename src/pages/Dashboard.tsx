@@ -9,6 +9,7 @@ import DashboardProfile from '@/components/dashboard/DashboardProfile';
 import DashboardSuggestedUniversities from '@/components/dashboard/DashboardSuggestedUniversities';
 import DashboardFavorites from '@/components/dashboard/DashboardFavorites';
 import { Profile } from '@/components/dashboard/types';
+import { Loader } from '@/components/ui/loader';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -91,7 +92,7 @@ export default function Dashboard() {
   }, [user]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader center />;
   }
 
   if (!user) {
