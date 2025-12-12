@@ -11,9 +11,13 @@ import { Search, MapPin, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import SidebarFilters from "@/components/SidebarFilters";
+
 import Breadcrumbs from "@/components/Breadcrumbs";
 import SeedUniversities from "@/components/seed";
 import { CalendarDays } from "lucide-react";
+import { useCompare } from "@/context/CompareContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import CompareFloatingBar from "@/components/CompareFloatingBar";
 
 interface University {
   id: string;
@@ -43,6 +47,7 @@ export default function Universities() {
   const [filters, setFilters] = useState<Filters>({});
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { addToCompare, removeFromCompare, isComparing, selectedUniversities } = useCompare();
 
   const [visibleCount, setVisibleCount] = useState(4);
 
@@ -214,6 +219,25 @@ export default function Universities() {
                         <CardTitle className="text-2xl font-bold text-foreground">
                           {university.name}
                         </CardTitle>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`compare-${university.id}`}
+                            checked={isComparing(university.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                addToCompare(university.id);
+                              } else {
+                                removeFromCompare(university.id);
+                              }
+                            }}
+                          />
+                          <label
+                            htmlFor={`compare-${university.id}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-muted-foreground select-none"
+                          >
+                            Compare
+                          </label>
+                        </div>
                       </div>
 
                       <div className="flex items-center gap-3 text-muted-foreground">
@@ -282,6 +306,7 @@ export default function Universities() {
           )}
         </div>
       </div>
+      <CompareFloatingBar />
     </div>
   );
 }

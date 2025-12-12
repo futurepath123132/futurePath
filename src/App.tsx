@@ -4,8 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import { CompareProvider } from "./context/CompareContext";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import Compare from "./pages/Compare";
 import Universities from "./pages/Universities";
 import UniversityDetail from "./pages/UniversityDetail";
 import Scholarships from "./pages/Scholarships";
@@ -40,33 +42,36 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
+              <CompareProvider>
 
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/universities" element={<Universities />} />
-                <Route path="/universities/:id" element={<UniversityDetail />} />
-                <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/universities" element={<Universities />} />
+                  <Route path="/universities/:id" element={<UniversityDetail />} />
+                  <Route path="/compare" element={<Compare />} />
+                  <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
 
-                <Route path="/scholarships" element={<Scholarships />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/admin/universities" element={<AdminUniversities />} />
-                <Route path="/admin/scholarships" element={<AdminScholarships />} />
-                <Route path="/admin/scraper" element={<AdminScraper />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/admin/analytics" element={<AdminAnalytics />} />
-                <Route path="/feedback" element={<Feedback />} />
+                  <Route path="/scholarships" element={<Scholarships />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/admin/universities" element={<AdminUniversities />} />
+                  <Route path="/admin/scholarships" element={<AdminScholarships />} />
+                  <Route path="/admin/scraper" element={<AdminScraper />} />
+                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                  <Route path="/feedback" element={<Feedback />} />
 
-                <Route path="*" element={<NotFound />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/auth/reset-password" element={<ResetPassword />} />
-                <Route path="/confirm-email" element={<ConfirmEmail />} />
-                <Route path="/change-password" element={<ChangePassword />} />
+                  <Route path="*" element={<NotFound />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="/auth/reset-password" element={<ResetPassword />} />
+                  <Route path="/confirm-email" element={<ConfirmEmail />} />
+                  <Route path="/change-password" element={<ChangePassword />} />
 
-              </Routes>
-              <BottomBar />
+                </Routes>
+                <BottomBar />
 
+              </CompareProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
