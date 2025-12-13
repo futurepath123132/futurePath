@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
+import { Loader } from "@/components/ui/loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -60,7 +61,7 @@ export default function Scholarships() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-       <Breadcrumbs />
+      <Breadcrumbs />
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -82,9 +83,7 @@ export default function Scholarships() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading scholarships...</p>
-          </div>
+          <Loader center />
         ) : filteredScholarships.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">

@@ -10,6 +10,8 @@ import DashboardSuggestedUniversities from '@/components/dashboard/DashboardSugg
 import DashboardFavorites from '@/components/dashboard/DashboardFavorites';
 import { Profile } from '@/components/dashboard/types';
 import { Loader } from '@/components/ui/loader';
+import KanbanBoard from '@/components/dashboard/kanban/KanbanBoard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -106,7 +108,14 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-foreground mb-8">Dashboard</h1>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-6">My Applications</h2>
+          <div className="h-[600px] border rounded-lg bg-muted/20 p-4 overflow-hidden">
+            <KanbanBoard userId={user.id} />
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8 mt-10">
           {/* Profile Section - Takes up 2 columns on large screens */}
           <div className="lg:col-span-2 space-y-8">
             <DashboardProfile

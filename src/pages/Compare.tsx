@@ -13,7 +13,7 @@ interface UniversityDetails {
     name: string;
     city: string;
     tuition_range?: string;
-    study_mode?: string[];
+    study_mode?: string;
     application_deadline?: string;
     disciplines?: string[];
     website?: string;
@@ -78,7 +78,7 @@ export default function Compare() {
                         </Link>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto pb-4">
+                    <div className="overflow-x-auto pb-4 max-w-full">
                         <div className="grid grid-cols-[200px_repeat(3,1fr)] min-w-[800px] gap-4">
                             {/* Row Headers */}
                             <div className="space-y-4 pt-60 font-semibold text-muted-foreground text-sm">

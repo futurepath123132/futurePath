@@ -5,6 +5,7 @@ import {
   Card,
   CardTitle,
 } from "@/components/ui/card";
+import { Loader } from "@/components/ui/loader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, ExternalLink } from "lucide-react";
@@ -178,9 +179,7 @@ export default function Universities() {
           </div>
 
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Loading universities...</p>
-            </div>
+            <Loader center />
           ) : filteredUniversities.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
