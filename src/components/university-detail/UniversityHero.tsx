@@ -35,7 +35,7 @@ export function UniversityHero({ university, isFavorite, onToggleFavorite }: Uni
 
         if (data) {
             setIsTracking(true);
-            setStatus(data.status);
+            setStatus((data as any).status);
         }
     };
 

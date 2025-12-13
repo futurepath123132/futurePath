@@ -28,6 +28,7 @@ import ScholarshipDetail from "./pages/ScholarshipDetail";
 import Feedback from "./pages/Feedback";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminUsers from "./pages/AdminUsers";
+import ChatWidget from "./components/chat/ChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => {
 
                 </Routes>
                 <BottomBar />
+                <ChatWidget />
 
               </CompareProvider>
             </AuthProvider>
