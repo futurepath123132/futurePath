@@ -1,26 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { DollarSign, Calendar, ExternalLink, Heart } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { format } from 'date-fns';
-import Breadcrumbs from '@/components/Breadcrumbs';
 import { Loader } from '@/components/ui/loader';
-
-interface Scholarship {
-  id: string;
-  title: string;
-  provider: string;
-  amount: string;
-  deadline: string;
-  eligibility: string;
-  link: string;
-  image_url?: string;
-}
+import { Scholarship } from '@/components/scholarship-detail/types';
+import { ScholarshipHero } from '@/components/scholarship-detail/ScholarshipHero';
+import { ScholarshipStats } from '@/components/scholarship-detail/ScholarshipStats';
+import { ScholarshipInfo } from '@/components/scholarship-detail/ScholarshipInfo';
+import { ScholarshipSidebar } from '@/components/scholarship-detail/ScholarshipSidebar';
 
 export default function ScholarshipDetail() {
   const { id } = useParams<{ id: string }>();
@@ -145,74 +135,25 @@ export default function ScholarshipDetail() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <Breadcrumbs />
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-4">
-          <Link to="/scholarships" className="text-primary hover:underline">
-            ← Back to Scholarships
-          </Link>
-        </div>
 
-        <div className="space-y-8">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2">{scholarship.title}</h1>
-              <p className="text-muted-foreground mb-2">{scholarship.provider}</p>
-              {scholarship.image_url && (
-                <img
-                  src={scholarship.image_url}
-                  alt={scholarship.title}
-                  className="w-full md:w-96 h-64 object-cover rounded"
-                />
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={toggleFavorite} variant="outline">
-                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current text-destructive' : ''}`} />
-              </Button>
-              {scholarship.link && (
-                <Button asChild>
-                  <a href={scholarship.link} target="_blank" rel="noopener noreferrer">
-                    Apply Now
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              )}
-            </div>
+      <ScholarshipHero
+        scholarship={scholarship}
+        isFavorite={isFavorite}
+        onToggleFavorite={toggleFavorite}
+      />
+
+      <div className="container mx-auto px-4 -mt-8 relative z-10 pb-12">
+        <ScholarshipStats scholarship={scholarship} />
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="md:col-span-2 space-y-8">
+            <ScholarshipInfo scholarship={scholarship} />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {scholarship.amount && (
-              <Card>
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Amount</h3>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{scholarship.amount}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {scholarship.deadline && (
-              <Card>
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Deadline</h3>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">
-                      {format(new Date(scholarship.deadline), 'MMM dd, yyyy')}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {scholarship.eligibility && (
-              <Card className="md:col-span-2">
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Eligibility</h3>
-                  <p className="text-sm">{scholarship.eligibility}</p>
-                </CardContent>
-              </Card>
-            )}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <ScholarshipSidebar scholarship={scholarship} />
           </div>
         </div>
       </div>

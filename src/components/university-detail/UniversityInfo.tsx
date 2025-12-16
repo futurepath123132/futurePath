@@ -49,7 +49,7 @@ export function UniversityInfo({ university }: UniversityInfoProps) {
                     <div className="flex justify-between items-center p-4 bg-muted/30 rounded-lg border border-border/50">
                         <div>
                             <p className="font-semibold text-primary text-lg">Tuition Fee</p>
-                            <p className="text-sm text-muted-foreground">Per Semester (Estimated)</p>
+                            <p className="text-sm text-muted-foreground">Per Semester (Estimated) in PKR</p>
                         </div>
                         <p className="text-xl font-bold text-foreground">{university.tuition_range || "Contact University"}</p>
                     </div>
