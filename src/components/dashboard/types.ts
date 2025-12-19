@@ -10,6 +10,8 @@ export interface Profile {
     zip_code: string;
     address: string;
     preferred_discipline: string;
+    preferred_location?: string;
+    preferred_fee?: string;
     profilepic: string | null;
 }
 

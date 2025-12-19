@@ -77,6 +77,108 @@ export async function deleteProfilePicture(
 }
 
 /**
+ * Uploads a document to Supabase storage
+ * @param userId - The user's ID
+ * @param file - The document file to upload
+ * @param documentType - The type of document (e.g., "CNIC", "Matric Marksheet")
+ * @returns The signed URL of the uploaded document and the file path
+ */
+export async function uploadDocument(
+    userId: string,
+    file: File,
+    documentType: string
+): Promise<{ signedUrl: string; filePath: string }> {
+    // Create a unique filename
+    const fileExt = file.name.split('.').pop();
+    const cleanType = documentType.replace(/\s+/g, '_').toLowerCase();
+    const fileName = `${userId}/${cleanType}_${Date.now()}.${fileExt}`;
+    const filePath = fileName;
+
+    // Upload the file to the user-documents bucket
+    const { error: uploadError } = await supabase.storage
+        .from('user-documents')
+        .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: true,
+        });
+
+    if (uploadError) {
+        throw uploadError;
+    }
+
+    // Get a signed URL
+    // Valid for 1 year
+    const { data, error: urlError } = await supabase.storage
+        .from('user-documents')
+        .createSignedUrl(filePath, 31536000);
+
+    if (urlError || !data) {
+        throw urlError || new Error('Failed to create signed URL');
+    }
+
+    return { signedUrl: data.signedUrl, filePath };
+}
+
+/**
+ * Deletes a document from Supabase storage
+ * @param fileUrl - The signed URL or path of the document
+ */
+export async function deleteDocument(
+    fileUrl: string
+): Promise<void> {
+    let filePath: string;
+
+    if (fileUrl.includes('/object/sign/user-documents/')) {
+        // Signed URL format
+        const parts = fileUrl.split('/object/sign/user-documents/');
+        filePath = parts[1]?.split('?')[0] || '';
+    } else if (fileUrl.includes('/user-documents/')) {
+        // Public/Path format
+        const parts = fileUrl.split('/user-documents/');
+        filePath = parts[1] || '';
+    } else {
+        // Assume it's just the path
+        filePath = fileUrl;
+    }
+
+    if (!filePath) {
+        throw new Error('Could not extract file path from URL');
+    }
+
+    const { error } = await supabase.storage
+        .from('user-documents')
+        .remove([filePath]);
+
+    if (error) {
+        throw error;
+    }
+}
+
+/**
+ * Validates document file before upload
+ * @param file - The file to validate
+ * @returns Error message if invalid, null if valid
+ */
+export function validateDocumentFile(file: File): string | null {
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        return 'Please upload a PDF, JPG, or PNG file.';
+    }
+
+    if (file.size > maxSize) {
+        return 'File size must be less than 5MB.';
+    }
+
+    return null;
+}
+
+/**
  * Validates image file before upload
  * @param file - The file to validate
  * @returns Error message if invalid, null if valid

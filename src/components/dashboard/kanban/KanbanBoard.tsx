@@ -12,10 +12,11 @@ const COLUMNS = [
     { id: "interested", title: "Interested" },
     { id: "applying", title: "Applying" },
     { id: "submitted", title: "Submitted" },
-    { id: "interview", title: "Interview" },
     { id: "accepted", title: "Accepted" },
     { id: "rejected", title: "Rejected" },
 ];
+
+import ApplicationTable from "./ApplicationTable";
 
 export default function KanbanBoard({ userId }: KanbanBoardProps) {
     const [applications, setApplications] = useState<any[]>([]);
@@ -117,20 +118,31 @@ export default function KanbanBoard({ userId }: KanbanBoardProps) {
     }
 
     return (
-        <div className="h-full overflow-x-auto pb-4">
-            <DragDropContext onDragEnd={onDragEnd}>
-                <div className="flex gap-4 min-w-max h-full">
-                    {COLUMNS.map((col) => (
-                        <KanbanColumn
-                            key={col.id}
-                            id={col.id}
-                            title={col.title}
-                            applications={applications.filter((app) => app.status === col.id)}
-                            onDelete={handleDelete}
-                        />
-                    ))}
-                </div>
-            </DragDropContext>
+        <div className="h-full flex flex-col gap-8">
+            <div className="h-[600px] overflow-x-auto pb-4">
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <div className="flex gap-4 min-w-max h-full">
+                        {COLUMNS.map((col) => (
+                            <KanbanColumn
+                                key={col.id}
+                                id={col.id}
+                                title={col.title}
+                                applications={applications.filter((app) => app.status === col.id)}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </DragDropContext>
+            </div>
+
+            <div className="flex-1">
+                <h3 className="text-xl font-bold mb-4">Detailed View</h3>
+                <ApplicationTable
+                    applications={applications}
+                    userId={userId}
+                    onRefresh={fetchApplications}
+                />
+            </div>
         </div>
     );
 }

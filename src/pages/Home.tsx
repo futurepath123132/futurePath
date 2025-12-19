@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GraduationCap, Search, BookOpen, Star } from 'lucide-react';
@@ -7,26 +8,25 @@ import ScrollingUniIcons from "@/components/ScrollingUniIcons";
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function Home() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-     const uniImages = [
-          "/uni-icons/lums_logo.png",
-          "/uni-icons/uet-lahore-seeklogo.png",
-          "/uni-icons/pu_icon.svg",
-          "/uni-icons/cuiLogo.png",
-          "/uni-icons/forman.png",
-          "/uni-icons/nustLogo.png",
-          "/uni-icons/fastLogo.png",
-          "/uni-icons/BZULogo.jpg",
-
-
-          
-        ]
+  const uniImages = [
+    { src: "/uni-icons/lums_logo.png", url: "https://lums.edu.pk/" },
+    { src: "/uni-icons/uet-lahore-seeklogo.png", url: "https://uet.edu.pk/" },
+    { src: "/uni-icons/pu_icon.svg", url: "http://pu.edu.pk/" },
+    { src: "/uni-icons/cuiLogo.png", url: "https://www.comsats.edu.pk/" },
+    { src: "/uni-icons/forman.png", url: "https://www.fccollege.edu.pk/" },
+    { src: "/uni-icons/nustLogo.png", url: "https://nust.edu.pk/" },
+    { src: "/uni-icons/fastLogo.png", url: "https://www.nu.edu.pk/" },
+    { src: "/uni-icons/BZULogo.jpg", url: "https://www.bzu.edu.pk/" },
+  ]
 
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-       <Breadcrumbs />
+      <Breadcrumbs />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
@@ -70,7 +70,10 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card>
+            <Card
+              className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1"
+              onClick={() => navigate('/universities')}
+            >
               <CardHeader>
                 <Search className="h-12 w-12 text-primary mb-4" />
                 <CardTitle>Smart Search</CardTitle>
@@ -80,17 +83,23 @@ export default function Home() {
               </CardHeader>
             </Card>
 
-            <Card>
+            <Card
+              className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1"
+              onClick={() => navigate('/scholarships')}
+            >
               <CardHeader>
                 <BookOpen className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Comprehensive Info</CardTitle>
+                <CardTitle>Scholarships</CardTitle>
                 <CardDescription>
                   Access detailed information about universities including programs, fees, and contact details
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card>
+            <Card
+              className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1"
+              onClick={() => navigate(user ? '/dashboard' : '/auth')}
+            >
               <CardHeader>
                 <Star className="h-12 w-12 text-primary mb-4" />
                 <CardTitle>Save Favorites</CardTitle>
@@ -102,7 +111,7 @@ export default function Home() {
 
 
           </div>
-        
+
           <div className="flex justify-center mt-10">
             <ScrollingUniIcons images={uniImages} />
           </div>
@@ -121,13 +130,13 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                  size="lg"
-                  className="w-full sm:w-auto"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                >
-                  Get Started
-                </Button>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                Get Started
+              </Button>
 
               <Link to="/universities">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto">
@@ -139,7 +148,7 @@ export default function Home() {
         </div>
       </section>
 
-     
+
     </div>
   );
 }

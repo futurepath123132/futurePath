@@ -12,7 +12,6 @@ const statusColors: Record<string, string> = {
     interested: "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400",
     applying: "bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-400",
     submitted: "bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400",
-    interview: "bg-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400",
     accepted: "bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400",
     rejected: "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400",
 };

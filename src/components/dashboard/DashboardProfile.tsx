@@ -71,6 +71,8 @@ export default function DashboardProfile({ user, profile, setProfile, onProfileU
                     zip_code: profile.zip_code || null,
                     address: profile.address || null,
                     preferred_discipline: profile.preferred_discipline || null,
+                    preferred_location: profile.preferred_location || null,
+                    preferred_fee: profile.preferred_fee || null,
                     updated_at: new Date().toISOString(),
                 });
 
@@ -236,6 +238,69 @@ export default function DashboardProfile({ user, profile, setProfile, onProfileU
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => toggleEdit('preferred_discipline')}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="preferred_location">Preferred Location</Label>
+                            <div className="flex gap-2">
+                                <div className="flex-1">
+                                    <Select
+                                        value={profile.preferred_location}
+                                        onValueChange={(value) => setProfile({ ...profile, preferred_location: value })}
+                                        disabled={!editMode['preferred_location']}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select City" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Lahore">Lahore</SelectItem>
+                                            <SelectItem value="Karachi">Karachi</SelectItem>
+                                            <SelectItem value="Islamabad">Islamabad</SelectItem>
+                                            <SelectItem value="Faisalabad">Faisalabad</SelectItem>
+                                            <SelectItem value="Rawalpindi">Rawalpindi</SelectItem>
+                                            <SelectItem value="Multan">Multan</SelectItem>
+                                            <SelectItem value="Peshawar">Peshawar</SelectItem>
+                                            <SelectItem value="Quetta">Quetta</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => toggleEdit('preferred_location')}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="preferred_fee">Preferred Fee (Semester)</Label>
+                            <div className="flex gap-2">
+                                <div className="flex-1">
+                                    <Select
+                                        value={profile.preferred_fee}
+                                        onValueChange={(value) => setProfile({ ...profile, preferred_fee: value })}
+                                        disabled={!editMode['preferred_fee']}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Range" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="100,000 - 200,000">100,000 - 200,000</SelectItem>
+                                            <SelectItem value="300,000 - 400,000">300,000 - 400,000</SelectItem>
+                                            <SelectItem value="500,000+">500,000+</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => toggleEdit('preferred_fee')}
                                 >
                                     <Pencil className="h-4 w-4" />
                                 </Button>

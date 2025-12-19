@@ -11,6 +11,7 @@ import DashboardFavorites from '@/components/dashboard/DashboardFavorites';
 import { Profile } from '@/components/dashboard/types';
 import { Loader } from '@/components/ui/loader';
 import KanbanBoard from '@/components/dashboard/kanban/KanbanBoard';
+import UserDocuments from '@/components/dashboard/UserDocuments';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
@@ -28,6 +29,8 @@ export default function Dashboard() {
     zip_code: '',
     address: '',
     preferred_discipline: '',
+    preferred_location: '',
+    preferred_fee: '',
     profilepic: null,
   });
 
@@ -46,19 +49,22 @@ export default function Dashboard() {
       const userMetaData = user?.user_metadata || {};
 
       if (data) {
+        const profileData = data as any;
         setProfile({
-          full_name: data.full_name || userMetaData.full_name || userMetaData.name || '',
-          email: data.email || user?.email || '',
-          city: data.city || '',
-          date_of_birth: data.date_of_birth || '',
-          gender: data.gender || '',
-          nationality: data.nationality || '',
-          phone: data.phone || '',
-          state: data.state || '',
-          zip_code: data.zip_code || '',
-          address: data.address || '',
-          preferred_discipline: data.preferred_discipline || '',
-          profilepic: data.profilepic || null,
+          full_name: profileData.full_name || userMetaData.full_name || userMetaData.name || '',
+          email: profileData.email || user?.email || '',
+          city: profileData.city || '',
+          date_of_birth: profileData.date_of_birth || '',
+          gender: profileData.gender || '',
+          nationality: profileData.nationality || '',
+          phone: profileData.phone || '',
+          state: profileData.state || '',
+          zip_code: profileData.zip_code || '',
+          address: profileData.address || '',
+          preferred_discipline: profileData.preferred_discipline || '',
+          preferred_location: profileData.preferred_location || '',
+          preferred_fee: profileData.preferred_fee || '',
+          profilepic: profileData.profilepic || null,
         });
       } else {
         // If no profile exists yet, pre-fill from auth data
@@ -74,6 +80,8 @@ export default function Dashboard() {
           zip_code: '',
           address: '',
           preferred_discipline: '',
+          preferred_location: '',
+          preferred_fee: '',
           profilepic: null,
         });
       }
@@ -108,38 +116,65 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-foreground mb-8">Dashboard</h1>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-6">My Applications</h2>
-          <div className="h-[600px] border rounded-lg bg-muted/20 p-4 overflow-hidden">
-            <KanbanBoard userId={user.id} />
-          </div>
-        </div>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="mb-8 p-1 bg-muted/30 border rounded-xl overflow-hidden">
+            <TabsTrigger
+              value="profile"
+              className="px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all"
+            >
+              Profile Settings
+            </TabsTrigger>
+            <TabsTrigger
+              value="applications"
+              className="px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all"
+            >
+              My Applications
+            </TabsTrigger>
+            <TabsTrigger
+              value="documents"
+              className="px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all"
+            >
+              My Documents
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="grid lg:grid-cols-3 gap-8 mt-10">
-          {/* Profile Section - Takes up 2 columns on large screens */}
-          <div className="lg:col-span-2 space-y-8">
-            <DashboardProfile
-              user={user}
-              profile={profile}
-              setProfile={setProfile}
-              onProfileUpdate={() => {
-                // Trigger any necessary updates after profile save
-                // Currently DashboardSuggestedUniversities updates automatically via props
-              }}
-            />
+          <TabsContent value="profile" className="animate-in fade-in-50 duration-300">
+            <div className="grid lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <DashboardProfile
+                  user={user}
+                  profile={profile}
+                  setProfile={setProfile}
+                  onProfileUpdate={() => {
+                    // Refresh profile data if needed
+                    fetchProfile();
+                  }}
+                />
+              </div>
+              <div className="space-y-8">
+                <DashboardFavorites userId={user.id} />
+              </div>
+            </div>
+          </TabsContent>
 
-            {/* Suggested Universities Section */}
+          <TabsContent value="applications" className="space-y-10 animate-in fade-in-50 duration-300">
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Application Tracker</h2>
+              <div className="border rounded-xl bg-muted/10 p-4 shadow-sm">
+                <KanbanBoard userId={user.id} />
+              </div>
+            </div>
+
             <DashboardSuggestedUniversities
-              city={profile.city}
+              city={profile.preferred_location || profile.city}
               preferred_discipline={profile.preferred_discipline}
             />
-          </div>
+          </TabsContent>
 
-          {/* Favorites Section - Right Sidebar */}
-          <div className="space-y-8">
-            <DashboardFavorites userId={user.id} />
-          </div>
-        </div>
+          <TabsContent value="documents" className="animate-in fade-in-50 duration-300">
+            <UserDocuments userId={user.id} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
