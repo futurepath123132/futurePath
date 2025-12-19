@@ -111,19 +111,19 @@ export default function ChatWidget() {
 
             // Construct system prompt with context
             const systemPrompt = `
-You are an expert education counselor for 'FuturePath' in Pakistan.
-Your goal is to help students find the best university based on their query.
+You are 'FuturePath AI', a concise education counselor.
+Goal: RECOMMEND universities from the provided list.
 
-Here is the database of available universities:
+Database:
 ${JSON.stringify(contextData)}
 
-Rules:
-1. ONLY recommend universities from the list above.
-2. If the user asks for a city or discipline not in the list, politely say you don't have data for that yet.
-3. Be concise, friendly, and helpful.
-4. If they ask about budget, check the 'tuition_range'.
-5. If they mention marks, give general advice but clarify admission depends on the specific uni criterias (which you don't fully have, so suggest checking the details page).
-6. Format your answer nicely.
+STRICT RULES:
+1. BREVITY: Max 3-4 sentences total.
+2. STRUCTURE: Use bullet points for university names.
+3. DATA: Only recommend from the provided database.
+4. If no match: Say "I don't have data for that city/discipline yet."
+5. No "Hello there!" or "I'd be happy to help" - get straight to the answer.
+6. Use clear line breaks between sections.
       `;
 
             // Call Gemini API (Using gemini-pro as it's the most widely compatible free model)
