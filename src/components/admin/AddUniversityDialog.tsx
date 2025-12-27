@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader } from '@/components/ui/loader';
+import { Program } from '@/components/university-detail/types';
 
 export interface University {
     id: string;
@@ -23,12 +24,16 @@ export interface University {
     contact_email: string;
     contact_phone: string;
     disciplines: string[];
-    programs: string[];
+    programs: Program[];
     application_deadline?: string;
     images?: string[];
     icon_url?: string;
+    hec_recognized?: boolean;
+    scimago_ranking?: string;
+    qs_ranking?: string;
     study_mode?: 'On-site' | 'Online' | 'Hybrid';
     size?: string;
+    // credit_hours removed from UI but kept in type optional if needed, or removed. Keeping optional for backward compat if DB has it.
     credit_hours?: number;
     starting_date?: string;
     available_seats?: number;
@@ -49,6 +54,9 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
     const [images, setImages] = useState<FileList | null>(null);
     const [icon, setIcon] = useState<File | null>(null);
 
+    const [programs, setPrograms] = useState<Program[]>([]);
+    const [currentProgram, setCurrentProgram] = useState({ name: '', url: '' });
+
     const [formData, setFormData] = useState({
         name: '',
         city: '',
@@ -61,18 +69,20 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
         contact_email: '',
         contact_phone: '',
         disciplines: '',
-        programs: '',
         application_deadline: '',
         study_mode: 'On-site' as 'On-site' | 'Online' | 'Hybrid',
         size: '',
-        credit_hours: '',
         starting_date: '',
         available_seats: '',
+        hec_recognized: false,
+        scimago_ranking: '',
+        qs_ranking: '',
         admission_requirements: '',
     });
 
     useEffect(() => {
         if (universityToEdit) {
+            setPrograms(universityToEdit.programs || []);
             setFormData({
                 name: universityToEdit.name || '',
                 city: universityToEdit.city || '',
@@ -85,13 +95,14 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                 contact_email: universityToEdit.contact_email || '',
                 contact_phone: universityToEdit.contact_phone || '',
                 disciplines: universityToEdit.disciplines?.join(', ') || '',
-                programs: universityToEdit.programs?.join(', ') || '',
                 application_deadline: universityToEdit.application_deadline || '',
                 study_mode: universityToEdit.study_mode || 'On-site',
                 size: universityToEdit.size || '',
-                credit_hours: universityToEdit.credit_hours?.toString() || '',
                 starting_date: universityToEdit.starting_date || '',
                 available_seats: universityToEdit.available_seats?.toString() || '',
+                hec_recognized: universityToEdit.hec_recognized || false,
+                scimago_ranking: universityToEdit.scimago_ranking || '',
+                qs_ranking: universityToEdit.qs_ranking || '',
                 admission_requirements: universityToEdit.admission_requirements || '',
             });
         } else {
@@ -103,11 +114,27 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
         setFormData({
             name: '', city: '', address: '', website: '', tuition_range: '', ranking: '',
             description: '', apply_link: '', contact_email: '', contact_phone: '',
-            disciplines: '', programs: '', application_deadline: '', study_mode: 'On-site',
-            size: '', credit_hours: '', starting_date: '', available_seats: '', admission_requirements: '',
+            disciplines: '', application_deadline: '', study_mode: 'On-site',
+            size: '', starting_date: '', available_seats: '', admission_requirements: '',
+            hec_recognized: false, scimago_ranking: '', qs_ranking: '',
         });
+        setPrograms([]);
+        setCurrentProgram({ name: '', url: '' });
         setImages(null);
         setIcon(null);
+    };
+
+    const addProgram = () => {
+        if (currentProgram.name && currentProgram.url) {
+            setPrograms([...programs, { name: currentProgram.name, url: currentProgram.url }]);
+            setCurrentProgram({ name: '', url: '' });
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: 'Please provide both program name and URL' });
+        }
+    };
+
+    const removeProgram = (index: number) => {
+        setPrograms(programs.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -165,25 +192,25 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                 ...formData,
                 ranking: formData.ranking ? parseInt(formData.ranking) : null,
                 disciplines: formData.disciplines ? formData.disciplines.split(',').map(d => d.trim()) : [],
-                programs: formData.programs ? formData.programs.split(',').map(p => p.trim()) : [],
+                programs: programs,
                 created_by: user?.id,
                 // Only include images/icon_url if they were updated (or if we want to overwrite)
                 // If imageUrls has items, it means we uploaded new ones, so we overwrite.
                 // If imageUrls is empty, we pass undefined to NOT update the column (keep existing).
                 images: images && images.length > 0 ? imageUrls : undefined,
                 icon_url: icon ? iconUrl : undefined,
-                credit_hours: formData.credit_hours ? parseInt(formData.credit_hours) : null,
+                // credit_hours: formData.credit_hours ? parseInt(formData.credit_hours) : null, // Removed from UI
                 starting_date: formData.starting_date || null,
                 available_seats: formData.available_seats ? parseInt(formData.available_seats) : null,
                 admission_requirements: formData.admission_requirements || null,
             };
 
             if (universityToEdit) {
-                const { error } = await supabase.from('universities').update(universityData).eq('id', universityToEdit.id);
+                const { error } = await supabase.from('universities').update(universityData as any).eq('id', universityToEdit.id);
                 if (error) throw error;
                 toast({ title: 'Success', description: 'University updated successfully' });
             } else {
-                const { error } = await supabase.from('universities').insert(universityData);
+                const { error } = await supabase.from('universities').insert(universityData as any);
                 if (error) throw error;
                 toast({ title: 'Success', description: 'University added successfully' });
             }
@@ -220,8 +247,29 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                     </div>
                     <div><Label htmlFor="size">Size (sq ft)</Label><Input id="size" placeholder="e.g., 500,000" value={formData.size} onChange={e => setFormData({ ...formData, size: e.target.value })} /></div>
                     <div className="grid md:grid-cols-2 gap-4">
-                        <div><Label htmlFor="credit_hours">Credit Hours</Label><Input id="credit_hours" type="number" value={formData.credit_hours} onChange={e => setFormData({ ...formData, credit_hours: e.target.value })} /></div>
+                        {/* Credit Hours removed */}
                         <div><Label htmlFor="available_seats">Available Seats</Label><Input id="available_seats" type="number" value={formData.available_seats} onChange={e => setFormData({ ...formData, available_seats: e.target.value })} /></div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div><Label htmlFor="hec_recognized">HEC Recognized</Label>
+                            <Select
+                                value={formData.hec_recognized ? "Yes" : "No"}
+                                onValueChange={(value) => setFormData({ ...formData, hec_recognized: value === "Yes" })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Yes">Yes</SelectItem>
+                                    <SelectItem value="No">No</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div><Label htmlFor="ranking">HEC Ranking</Label><Input id="ranking" type="number" value={formData.ranking} onChange={e => setFormData({ ...formData, ranking: e.target.value })} /></div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div><Label htmlFor="scimago_ranking">Scimago Ranking</Label><Input id="scimago_ranking" value={formData.scimago_ranking} onChange={e => setFormData({ ...formData, scimago_ranking: e.target.value })} /></div>
+                        <div><Label htmlFor="qs_ranking">QS Ranking</Label><Input id="qs_ranking" value={formData.qs_ranking} onChange={e => setFormData({ ...formData, qs_ranking: e.target.value })} /></div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                         <div><Label htmlFor="application_deadline">Application Deadline</Label><Input id="application_deadline" type="date" value={formData.application_deadline} onChange={e => setFormData({ ...formData, application_deadline: e.target.value })} /></div>
@@ -252,7 +300,51 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                         <div><Label htmlFor="contact_phone">Contact Phone</Label><Input id="contact_phone" value={formData.contact_phone} onChange={e => setFormData({ ...formData, contact_phone: e.target.value })} /></div>
                     </div>
                     <div><Label htmlFor="disciplines">Disciplines (comma-separated)</Label><Input id="disciplines" placeholder="e.g., Computer Science, Engineering, Medicine" value={formData.disciplines} onChange={e => setFormData({ ...formData, disciplines: e.target.value })} /></div>
-                    <div><Label htmlFor="programs">Programs (comma-separated)</Label><Input id="programs" placeholder="e.g., BS, MS, PhD" value={formData.programs} onChange={e => setFormData({ ...formData, programs: e.target.value })} /></div>
+
+                    {/* Programs Section */}
+                    <div className="space-y-3">
+                        <Label>Programs</Label>
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <Input
+                                    placeholder="Program name (e.g., BS Computer Science)"
+                                    value={currentProgram.name}
+                                    onChange={e => setCurrentProgram({ ...currentProgram, name: e.target.value })}
+                                />
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
+                                    type="url"
+                                    placeholder="Program URL"
+                                    value={currentProgram.url}
+                                    onChange={e => setCurrentProgram({ ...currentProgram, url: e.target.value })}
+                                />
+                                <Button type="button" onClick={addProgram} variant="outline">Add</Button>
+                            </div>
+                        </div>
+                        {programs.length > 0 && (
+                            <div className="space-y-2 mt-3">
+                                <p className="text-sm text-muted-foreground">Added Programs:</p>
+                                {programs.map((program, index) => (
+                                    <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                                        <div className="flex-1">
+                                            <p className="text-sm font-medium">{program.name}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{program.url}</p>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() => removeProgram(index)}
+                                        >
+                                            Remove
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                     <div><Label htmlFor="icon">Upload Icon</Label><Input id="icon" type="file" accept="image/*" onChange={e => setIcon(e.target.files?.[0] || null)} /></div>
                     <div><Label htmlFor="images">Upload Images</Label><Input id="images" type="file" multiple accept="image/*" onChange={e => setImages(e.target.files)} /></div>
 

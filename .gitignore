@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 *.env
+*seedData.ts
+*seedIcons.ts
+*university-icons
+*UNIVERSITYE-IMAGES

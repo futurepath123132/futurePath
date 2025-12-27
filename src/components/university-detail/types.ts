@@ -1,3 +1,8 @@
+export interface Program {
+    name: string;
+    url: string;
+}
+
 export interface UniversityDetail {
     id: string;
     name: string;
@@ -6,7 +11,7 @@ export interface UniversityDetail {
     website: string;
     tuition_range: string;
     ranking: number;
-    programs: string[];
+    programs: Program[];
     disciplines: string[];
     contact_email: string;
     contact_phone: string;
@@ -21,4 +26,7 @@ export interface UniversityDetail {
     admission_requirements?: string;
     application_deadline?: string;
     study_mode?: string;
+    hec_recognized?: boolean;
+    scimago_ranking?: string;
+    qs_ranking?: string;
 }

@@ -1,0 +1,33 @@
+-- SQL Update Script for University Icons
+
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Beaconhouse_National_University_(BNU)/icon_1766566973908_bnu-logo.png' WHERE name = 'Beaconhouse National University (BNU)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/COMSATS_University_Islamabad/icon_1766566974876_cui-logo.png' WHERE name = 'COMSATS University Islamabad';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Forman_Christian_College/icon_1766566975224_fcc-logo.svg' WHERE name = 'Forman Christian College';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Government_College_University/icon_1766566975416_gccu-logo.png' WHERE name = 'Government College University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Hajvery_University/icon_1766566975753_hu-logo.png' WHERE name = 'Hajvery University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Imperial_College_of_Business_Studies/icon_1766566975979_icbs-logo.png' WHERE name = 'Imperial College of Business Studies';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Information_Technology_University_(ITU)/icon_1766566976303_itu-logo.png' WHERE name = 'Information Technology University (ITU)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/The_Islamia_University_of_Bahawalpur/icon_1766566976499_iub-logo.png' WHERE name = 'The Islamia University of Bahawalpur';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Fatima_Jinnah_Medical_University/icon_1766566976805_fjmu-logo.png' WHERE name = 'Fatima Jinnah Medical University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/King_Edward_Medical_University/icon_1766566977060_kemu-logo.jpeg' WHERE name = 'King Edward Medical University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Lahore_College_for_Women_University_(LCWU)/icon_1766566977365_lcwu-logo.png' WHERE name = 'Lahore College for Women University (LCWU)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Lahore_Garrison_University/icon_1766566977568_lgu-logo.png' WHERE name = 'Lahore Garrison University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Lahore_Leads_University/icon_1766566977881_llu-logo.jpeg' WHERE name = 'Lahore Leads University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Lahore_School_of_Economics_(LSE)/icon_1766566978084_lse-logo.png' WHERE name = 'Lahore School of Economics (LSE)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Lahore_University_of_Management_Sciences/icon_1766566978344_lums-logo.png' WHERE name = 'Lahore University of Management Sciences';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Minhaj_University_Lahore/icon_1766566978578_mu-logo.png' WHERE name = 'Minhaj University Lahore';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/National_College_of_Arts_(NCA)/icon_1766566979148_nca-logo.png' WHERE name = 'National College of Arts (NCA)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/National_Textile_University/icon_1766566979367_ntu-logo.png' WHERE name = 'National Textile University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_the_Punjab/icon_1766566979922_pu-logo..svg' WHERE name = 'University of the Punjab';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/Superior_University/icon_1766566980296_su-logo.jpeg' WHERE name = 'Superior University';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Central_Punjab_(UCP)/icon_1766566980496_ucp-logo..png' WHERE name = 'University of Central Punjab (UCP)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Engineering_and_Technology/icon_1766566980689_uet-logo.png' WHERE name = 'University of Engineering and Technology';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Health_Sciences,_Lahore_(UHS)/icon_1766566981042_uhs-logo.png' WHERE name = 'University of Health Sciences, Lahore (UHS)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Management_&_Technology_(UMT)/icon_1766566981211_umt-logo.png' WHERE name = 'University of Management & Technology (UMT)';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Chakwal/icon_1766566981544_uoc-logo.png' WHERE name = 'University of Chakwal';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Faisalabad/icon_1766566982412_uof-logo.png' WHERE name = 'University of Faisalabad';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Gujrat/icon_1766566982663_uog-logo.png' WHERE name = 'University of Gujrat';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Sargodha/icon_1766566983040_uos-logo..png' WHERE name = 'University of Sargodha';
+UPDATE universities SET icon_url = 'https://engscfzubhsukaaggxkw.supabase.co/storage/v1/object/public/uni_icon/University_of_Veterinary_and_Animal_Sciences/icon_1766566983400_uvas-logo.svg' WHERE name = 'University of Veterinary and Animal Sciences';
+
+-- Note: NUML (National University of Modern Languages) upload failed due to special character. Please fix filename and re-run seed script for that one.

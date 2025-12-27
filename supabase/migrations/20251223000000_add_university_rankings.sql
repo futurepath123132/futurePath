@@ -1,0 +1,5 @@
+-- Add ranking columns to universities table
+ALTER TABLE public.universities
+ADD COLUMN IF NOT EXISTS hec_recognized BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS scimago_ranking TEXT,
+ADD COLUMN IF NOT EXISTS qs_ranking TEXT;

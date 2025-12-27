@@ -13,7 +13,21 @@ export function UniversityInfo({ university }: UniversityInfoProps) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     <div className="text-center p-4 bg-muted/50 rounded-lg">
                         <p className="text-3xl font-bold text-primary mb-1">{university.ranking || "N/A"}</p>
-                        <p className="text-sm text-muted-foreground">Ranking</p>
+                        <p className="text-sm text-muted-foreground">HEC Ranking</p>
+                    </div>
+                    {university.hec_recognized !== undefined && (
+                        <div className="text-center p-4 bg-muted/50 rounded-lg">
+                            <p className="text-xl font-bold text-primary mb-1">{university.hec_recognized ? "Yes" : "No"}</p>
+                            <p className="text-sm text-muted-foreground">HEC Recognized</p>
+                        </div>
+                    )}
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                        <p className="text-xl font-bold text-primary mb-1">{university.scimago_ranking || "N/A"}</p>
+                        <p className="text-sm text-muted-foreground">Scimago Ranking</p>
+                    </div>
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                        <p className="text-xl font-bold text-primary mb-1">{university.qs_ranking || "N/A"}</p>
+                        <p className="text-sm text-muted-foreground">QS Ranking</p>
                     </div>
                     <div className="text-center p-4 bg-muted/50 rounded-lg">
                         <p className="text-lg font-bold text-primary mb-1 line-clamp-1">{university.city}</p>

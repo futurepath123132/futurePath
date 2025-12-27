@@ -25,6 +25,9 @@ export interface University {
     disciplines?: string[];
     images?: string[];
     icon_url?: string;
+    hec_recognized?: boolean;
+    scimago_ranking?: string;
+    qs_ranking?: string;
 }
 
 export interface Favorite {

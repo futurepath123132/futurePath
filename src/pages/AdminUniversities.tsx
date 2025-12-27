@@ -12,6 +12,7 @@ import SidebarFilters from '@/components/SidebarFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { AddUniversityDialog, University } from '@/components/admin/AddUniversityDialog';
 import { Loader } from '@/components/ui/loader';
+import { seedUniversities } from '@/components/admin/data/seedData';
 
 interface Filters {
   city?: string;
@@ -89,6 +90,46 @@ export default function AdminUniversities() {
     else { toast({ title: 'Success', description: 'University deleted successfully' }); fetchUniversities(); }
   };
 
+  const handleSeed = async () => {
+    try {
+      let addedCount = 0;
+      let updatedCount = 0;
+
+      for (const seedUni of seedUniversities) {
+        // Check if exists
+        const { data: existing } = await supabase
+          .from('universities')
+          .select('id')
+          .eq('name', seedUni.name)
+          .maybeSingle();
+
+        if (existing) {
+          // Update new fields (rankings)
+          const { error } = await supabase
+            .from('universities')
+            .update({
+              hec_recognized: seedUni.hec_recognized,
+              scimago_ranking: seedUni.scimago_ranking,
+              qs_ranking: seedUni.qs_ranking,
+              ranking: seedUni.ranking
+            })
+            .eq('id', existing.id);
+          if (error) console.error(error);
+          updatedCount++;
+        } else {
+          // Insert
+          const { error } = await supabase.from('universities').insert(seedUni);
+          if (error) console.error(error);
+          addedCount++;
+        }
+      }
+      toast({ title: 'Seeding Complete', description: `Added ${addedCount} new, Updated ${updatedCount} existing universities.` });
+      fetchUniversities();
+    } catch (e: any) {
+      toast({ variant: 'destructive', title: 'Seeding Failed', description: e.message });
+    }
+  };
+
   const handleOpenChange = (open: boolean) => {
     setDialogOpen(open);
     if (!open) {
@@ -107,7 +148,10 @@ export default function AdminUniversities() {
             <h1 className="text-4xl font-bold text-foreground">Manage Universities</h1>
           </div>
 
-          <Button onClick={() => setDialogOpen(true)}><Plus className="mr-2 h-4 w-4" />Add University</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleSeed}>Seed Missing Universities</Button>
+            <Button onClick={() => setDialogOpen(true)}><Plus className="mr-2 h-4 w-4" />Add University</Button>
+          </div>
 
           <AddUniversityDialog
             open={dialogOpen}

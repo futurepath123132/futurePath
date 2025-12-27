@@ -9,17 +9,7 @@ interface UniversityStatsProps {
 export function UniversityStats({ university }: UniversityStatsProps) {
     return (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <Card className="bg-card shadow-lg border-border">
-                <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 bg-primary/10 rounded-full text-primary">
-                        <BookOpen className="h-6 w-6" />
-                    </div>
-                    <div>
-                        <p className="text-2xl font-bold text-foreground">{university.credit_hours || "N/A"}</p>
-                        <p className="text-sm text-muted-foreground">Credit Hours</p>
-                    </div>
-                </CardContent>
-            </Card>
+            {/* Credit Hours Card Removed */}
 
             <Card className="bg-card shadow-lg border-border">
                 <CardContent className="p-4 flex items-center gap-4">
