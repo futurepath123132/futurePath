@@ -1,11 +1,43 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface UniversityGalleryProps {
     images: string[];
 }
 
 export function UniversityGallery({ images }: UniversityGalleryProps) {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+    const handlePrevious = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (selectedIndex === null) return;
+        setSelectedIndex(selectedIndex === 0 ? images.length - 1 : selectedIndex - 1);
+    };
+
+    const handleNext = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (selectedIndex === null) return;
+        setSelectedIndex(selectedIndex === images.length - 1 ? 0 : selectedIndex + 1);
+    };
+
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (selectedIndex === null) return;
+        if (e.key === 'ArrowLeft') {
+            setSelectedIndex(prev => (prev === null || prev === 0 ? images.length - 1 : prev - 1));
+        } else if (e.key === 'ArrowRight') {
+            setSelectedIndex(prev => (prev === null || prev === images.length - 1 ? 0 : prev + 1));
+        } else if (e.key === 'Escape') {
+            setSelectedIndex(null);
+        }
+    }, [selectedIndex, images.length]);
+
+    useEffect(() => {
+        if (selectedIndex !== null) {
+            window.addEventListener('keydown', handleKeyDown);
+            return () => window.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [selectedIndex, handleKeyDown]);
 
     if (!images || images.length === 0) return null;
 
@@ -18,7 +50,7 @@ export function UniversityGallery({ images }: UniversityGalleryProps) {
                         <div
                             key={i}
                             className="aspect-video rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={() => setSelectedImage(img)}
+                            onClick={() => setSelectedIndex(i)}
                         >
                             <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
                         </div>
@@ -27,23 +59,65 @@ export function UniversityGallery({ images }: UniversityGalleryProps) {
             </section>
 
             {/* Image Lightbox Modal */}
-            {selectedImage && (
+            {selectedIndex !== null && (
                 <div
-                    className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-                    onClick={() => setSelectedImage(null)}
+                    className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+                    onClick={() => setSelectedIndex(null)}
                 >
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-4 right-4 text-white hover:bg-white/10"
+                        onClick={() => setSelectedIndex(null)}
+                    >
+                        <X className="h-6 w-6" />
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 text-white hover:bg-white/10 h-12 w-12 hidden md:flex"
+                        onClick={handlePrevious}
+                    >
+                        <ChevronLeft className="h-8 w-8" />
+                    </Button>
+
                     <div className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
                         <img
-                            src={selectedImage}
-                            alt="Gallery Fullscreen"
-                            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                            src={images[selectedIndex]}
+                            alt={`Gallery ${selectedIndex + 1}`}
+                            className="max-w-full max-h-[85vh] object-contain rounded-lg select-none"
+                            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking image
                         />
-                        <button
-                            onClick={() => setSelectedImage(null)}
-                            className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+                    </div>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-4 text-white hover:bg-white/10 h-12 w-12 hidden md:flex"
+                        onClick={handleNext}
+                    >
+                        <ChevronRight className="h-8 w-8" />
+                    </Button>
+
+                    {/* Mobile Navigation - Visible only on small screens */}
+                    <div className="absolute bottom-6 flex gap-8 md:hidden">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-white hover:bg-white/10 h-12 w-12"
+                            onClick={handlePrevious}
                         >
-                            <span className="text-4xl">&times;</span>
-                        </button>
+                            <ChevronLeft className="h-8 w-8" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-white hover:bg-white/10 h-12 w-12"
+                            onClick={handleNext}
+                        >
+                            <ChevronRight className="h-8 w-8" />
+                        </Button>
                     </div>
                 </div>
             )}
