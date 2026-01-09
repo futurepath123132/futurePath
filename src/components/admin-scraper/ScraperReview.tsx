@@ -79,6 +79,7 @@ export default function ScraperReview({
                                             <SelectItem value="PhD">PhD</SelectItem>
                                             <SelectItem value="Diploma">Diploma</SelectItem>
                                             <SelectItem value="Certificate">Certificate</SelectItem>
+                                            <SelectItem value="Other">All</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

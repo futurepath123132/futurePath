@@ -22,7 +22,6 @@ export interface UniversityDetail {
     size?: string;
     credit_hours?: number;
     starting_date?: string;
-    available_seats?: number;
     admission_requirements?: string;
     application_deadline?: string;
     study_mode?: string;

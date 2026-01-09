@@ -36,7 +36,6 @@ export interface University {
     // credit_hours removed from UI but kept in type optional if needed, or removed. Keeping optional for backward compat if DB has it.
     credit_hours?: number;
     starting_date?: string;
-    available_seats?: number;
     admission_requirements?: string;
 }
 
@@ -73,7 +72,6 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
         study_mode: 'On-site' as 'On-site' | 'Online' | 'Hybrid',
         size: '',
         starting_date: '',
-        available_seats: '',
         hec_recognized: false,
         scimago_ranking: '',
         qs_ranking: '',
@@ -99,7 +97,6 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                 study_mode: universityToEdit.study_mode || 'On-site',
                 size: universityToEdit.size || '',
                 starting_date: universityToEdit.starting_date || '',
-                available_seats: universityToEdit.available_seats?.toString() || '',
                 hec_recognized: universityToEdit.hec_recognized || false,
                 scimago_ranking: universityToEdit.scimago_ranking || '',
                 qs_ranking: universityToEdit.qs_ranking || '',
@@ -115,7 +112,7 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
             name: '', city: '', address: '', website: '', tuition_range: '', ranking: '',
             description: '', apply_link: '', contact_email: '', contact_phone: '',
             disciplines: '', application_deadline: '', study_mode: 'On-site',
-            size: '', starting_date: '', available_seats: '', admission_requirements: '',
+            size: '', starting_date: '', admission_requirements: '',
             hec_recognized: false, scimago_ranking: '', qs_ranking: '',
         });
         setPrograms([]);
@@ -201,7 +198,6 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                 icon_url: icon ? iconUrl : undefined,
                 // credit_hours: formData.credit_hours ? parseInt(formData.credit_hours) : null, // Removed from UI
                 starting_date: formData.starting_date || null,
-                available_seats: formData.available_seats ? parseInt(formData.available_seats) : null,
                 admission_requirements: formData.admission_requirements || null,
             };
 
@@ -247,8 +243,6 @@ export function AddUniversityDialog({ open, onOpenChange, universityToEdit, onSu
                     </div>
                     <div><Label htmlFor="size">Size (sq ft)</Label><Input id="size" placeholder="e.g., 500,000" value={formData.size} onChange={e => setFormData({ ...formData, size: e.target.value })} /></div>
                     <div className="grid md:grid-cols-2 gap-4">
-                        {/* Credit Hours removed */}
-                        <div><Label htmlFor="available_seats">Available Seats</Label><Input id="available_seats" type="number" value={formData.available_seats} onChange={e => setFormData({ ...formData, available_seats: e.target.value })} /></div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                         <div><Label htmlFor="hec_recognized">HEC Recognized</Label>

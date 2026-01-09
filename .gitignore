@@ -27,3 +27,6 @@ dist-ssr
 *seedIcons.ts
 *university-icons
 *UNIVERSITYE-IMAGES
+*seedScholarships.ts
+*seedScholarships.tsx
+*testEnv.ts

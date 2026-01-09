@@ -17,7 +17,7 @@ export interface Scholarship {
     amount: string;
     eligibility: string;
     deadline: string;
-    program_level: string;
+    program_level: "BS" | "MS" | "PhD" | "Diploma" | "Certificate";
     link: string;
     description: string;
     disciplines: string[];
